@@ -1,1 +1,11 @@
 <app-top-bar-component></app-top-bar-component>
+<app-filter-category [categorys]="categorys"></app-filter-category>
+<app-banner></app-banner>
+<div>
+    <h2 class="text-2xl font-bold text-gray-900 mb-4">Productos Destacados</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        @for (product of products; track product.id) {
+            <app-item-product [product]="product"></app-item-product>
+        }
+    </div>
+</div>

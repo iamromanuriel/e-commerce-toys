@@ -1,0 +1,147 @@
+<section
+  class="relative w-full rounded-2xl overflow-hidden bg-gradient-to-br from-[#eef0f3] to-[#e2e6eb] select-none"
+  style="min-height: 420px;"
+  (mouseenter)="stopAutoplay()"
+  (mouseleave)="startAutoplay()"
+>
+
+  <!-- Slides -->
+  @for (slide of slides; track slide.title; let i = $index) {
+    <div
+      class="absolute inset-0 flex items-center px-10 py-10 transition-all duration-500"
+      [class.opacity-100]="i === currentIndex"
+      [class.opacity-0]="i !== currentIndex"
+      [class.pointer-events-auto]="i === currentIndex"
+      [class.pointer-events-none]="i !== currentIndex"
+    >
+      <!-- Left Content -->
+      <div class="flex flex-col gap-5 max-w-md z-10">
+
+        <!-- Badge -->
+        <span class="inline-flex items-center gap-1.5 self-start bg-white/80 backdrop-blur-sm text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full shadow-sm border border-white/60">
+          {{ slide.badge }}
+        </span>
+
+        <!-- Title -->
+        <h1 class="text-4xl font-black text-gray-900 leading-tight tracking-tight">
+          {{ slide.title }}
+        </h1>
+
+        <!-- Feature Row -->
+        <div class="flex items-start gap-3">
+          <div class="flex items-center gap-2 mt-1 flex-shrink-0">
+            <span class="text-3xl font-black text-gray-200 leading-none">01</span>
+            <div class="w-10 h-px bg-gray-400"></div>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="text-gray-500">
+              <path d="M1 6h10M7 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div>
+            <p class="text-base font-semibold text-gray-800">{{ slide.subtitle }}</p>
+            <p class="text-sm text-gray-500 mt-0.5 leading-relaxed">{{ slide.description }}</p>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div class="flex items-center gap-3 mt-1">
+          <a
+            [href]="slide.ctaLink"
+            class="inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-bold text-gray-900 transition-all duration-200 hover:scale-105 active:scale-95 shadow-md"
+            [style.backgroundColor]="slide.accent"
+          >
+            {{ slide.cta }}
+            <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-gray-900">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 10L10 2M10 2H4M10 2v6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+          </a>
+        </div>
+
+        <!-- Social -->
+        <div class="flex items-center gap-3 mt-2">
+          <span class="text-xs text-gray-400 font-medium">Follow us on:</span>
+          @for (social of [
+            {label:'Twitter', path:'M23 3a10.9 10.9 0 01-3.14 1.53A4.48 4.48 0 0022.43.36a9 9 0 01-2.88 1.1A4.52 4.52 0 0016.11 0c-2.5 0-4.52 2.02-4.52 4.52 0 .35.04.7.11 1.03C7.69 5.37 4.07 3.58 1.64.9a4.52 4.52 0 00-.61 2.27c0 1.57.8 2.95 2.01 3.76a4.5 4.5 0 01-2.05-.57v.06c0 2.19 1.56 4.02 3.63 4.44a4.54 4.54 0 01-2.04.08 4.52 4.52 0 004.22 3.14A9.07 9.07 0 010 19.54a12.8 12.8 0 006.92 2.03c8.3 0 12.85-6.88 12.85-12.85 0-.2 0-.39-.01-.58A9.18 9.18 0 0023 3z'},
+            {label:'TikTok', path:'M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z'},
+            {label:'Instagram', path:'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z'},
+            {label:'LinkedIn', path:'20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z'}
+          ]; track social.label) {
+            <button class="flex items-center justify-center w-7 h-7 rounded-full bg-white/70 hover:bg-white text-gray-500 hover:text-gray-900 transition-all duration-150 shadow-sm">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor">
+                <path [attr.d]="social.path"/>
+              </svg>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Decorative Dots -->
+      @for (dot of slide.dots; track dot.top) {
+        <div
+          class="absolute rounded-full opacity-80 transition-all duration-500"
+          [ngClass]="dot.size"
+          [style.top]="dot.top"
+          [style.left]="dot.left"
+          [style.backgroundColor]="dot.color"
+        ></div>
+      }
+
+      <!-- Product Image -->
+      <div class="absolute right-6 top-1/2 -translate-y-1/2 w-72 h-72 flex items-center justify-center pointer-events-none">
+        <div
+          class="absolute inset-0 rounded-full opacity-20 blur-3xl"
+          [style.backgroundColor]="slide.accent"
+        ></div>
+        <img
+          [src]="slide.image"
+          [alt]="slide.title"
+          class="relative w-full h-full object-contain drop-shadow-2xl transition-all duration-500"
+          [class.scale-100]="i === currentIndex"
+          [class.scale-90]="i !== currentIndex"
+        />
+      </div>
+
+      <!-- Code/Nav icon bottom right -->
+      <div class="absolute bottom-6 right-6 flex items-center justify-center w-9 h-9 rounded-full border border-gray-300 bg-white/60 backdrop-blur-sm text-gray-500">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+        </svg>
+      </div>
+    </div>
+  }
+
+  <!-- Prev / Next arrows -->
+  <button
+    (click)="prev()"
+    class="absolute left-3 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-white/70 backdrop-blur-sm text-gray-600 hover:bg-white hover:text-gray-900 shadow-sm transition-all duration-150 hover:scale-110 active:scale-95"
+  >
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+  </button>
+  <button
+    (click)="next()"
+    class="absolute right-16 top-1/2 -translate-y-1/2 z-20 flex items-center justify-center w-8 h-8 rounded-full bg-white/70 backdrop-blur-sm text-gray-600 hover:bg-white hover:text-gray-900 shadow-sm transition-all duration-150 hover:scale-110 active:scale-95"
+  >
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"/>
+    </svg>
+  </button>
+
+  <!-- Dots indicator -->
+  <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20">
+    @for (slide of slides; track slide.title; let i = $index) {
+      <button
+        (click)="goTo(i)"
+        class="rounded-full transition-all duration-300"
+        [class.w-6]="i === currentIndex"
+        [class.w-2]="i !== currentIndex"
+        [class.h-2]="true"
+        [class.bg-gray-900]="i === currentIndex"
+        [class.bg-gray-400]="i !== currentIndex"
+      ></button>
+    }
+  </div>
+
+</section>
