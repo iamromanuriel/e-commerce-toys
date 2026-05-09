@@ -2,6 +2,10 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LogisticaService, Entrega } from '../services/firebase.service';
+import { ProductService } from '../services/product.service';
+import { CategoryService } from '../services/category.service';
+import { Product } from '../model/produt';
+import { Category } from '../model/category';
 
 @Component({
   selector: 'app-entregas',
@@ -51,6 +55,8 @@ import { LogisticaService, Entrega } from '../services/firebase.service';
 export class EntregasComponent {
   // ✅ inject() — sin constructor
   logisticaService = inject(LogisticaService);
+  productService = inject(ProductService);
+  categoryService = inject(CategoryService);
 
   // Signals locales para el formulario
   nuevoDestinatario = signal('');
@@ -75,5 +81,19 @@ export class EntregasComponent {
     } finally {
       this.cargando.set(false);
     }
+  }
+
+  async ngOnInit(): Promise<void> {
+    // Cargar entregas al iniciar el componente (opcional, ya que el Signal se actualiza automáticamente)
+    this.productService.getProducts$().subscribe((products: Product[]) => {
+      console.log('Productos disponibles:', products);
+    }
+    );
+
+
+    this.categoryService.getCategories$().subscribe((categories: Category[]) => {
+      console.log('Categorías disponibles:', categories);
+    }
+    );
   }
 }
