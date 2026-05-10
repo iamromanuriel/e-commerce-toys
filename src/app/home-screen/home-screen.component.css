@@ -1,0 +1,25 @@
+/* Pagination Responsive Styles */
+@media (max-width: 640px) {
+  :host ::ng-deep .pagination-container {
+    padding: 1rem;
+  }
+
+  :host ::ng-deep .pagination-controls {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  :host ::ng-deep .page-numbers {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* Smooth transitions */
+:host ::ng-deep button {
+  transition: all 0.2s ease-in-out;
+}
+
+:host ::ng-deep button:active {
+  transform: scale(0.95);
+}

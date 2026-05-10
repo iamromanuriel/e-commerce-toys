@@ -1,0 +1,40 @@
+/* Item Product Responsive Styles */
+:host ::ng-deep {
+  article {
+    margin: 0 auto;
+  }
+
+  /* Mobile - extra small screens */
+  @media (max-width: 320px) {
+    .px-3 {
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+
+    h3 {
+      font-size: 0.75rem;
+    }
+
+    p {
+      font-size: 0.65rem;
+    }
+
+    button {
+      padding: 0.5rem;
+      font-size: 0.65rem;
+    }
+  }
+
+  /* Smooth hover effects */
+  article {
+    transition: all 0.3s ease-in-out;
+  }
+
+  button {
+    transition: all 0.2s ease-in-out;
+  }
+
+  button:active {
+    transform: scale(0.95);
+  }
+}

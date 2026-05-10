@@ -5,12 +5,15 @@ import { toSignal } from "@angular/core/rxjs-interop";
 import { Product } from "../model/produt";
 import { writeBatch, doc } from "firebase/firestore";
 
+const ITEMS_PER_PAGE = 12;
+
 @Injectable(
     { providedIn: 'root'}
 )
 export class ProductService {
     private firebase = inject(Firestore);
     private productCollection = collection(this.firebase, 'products');
+    private currentPage = signal(1);
 
     
     private product: Product[] = [
@@ -126,5 +129,25 @@ export class ProductService {
         console.log(`${this.product.length} productos guardados`);
     }
 
-    
+    getCurrentPage(): number {
+        return this.currentPage();
+    }
+
+    setCurrentPage(page: number): void {
+        this.currentPage.set(page);
+    }
+
+    getPaginatedProducts(products: Product[]): Product[] {
+        const start = (this.currentPage() - 1) * ITEMS_PER_PAGE;
+        const end = start + ITEMS_PER_PAGE;
+        return products.slice(start, end);
+    }
+
+    getTotalPages(totalProducts: number): number {
+        return Math.ceil(totalProducts / ITEMS_PER_PAGE);
+    }
+
+    getItemsPerPage(): number {
+        return ITEMS_PER_PAGE;
+    }
 }
