@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Product } from '../model/produt';
@@ -16,17 +16,17 @@ export class ItemProductComponent {
  
   isFavorite = false;
  
- 
-  toggleFavorite(event: MouseEvent): void {
-    event.stopPropagation();
-    event.preventDefault();
-    this.isFavorite = !this.isFavorite;
-  }
- 
+  @Output() productSelected = new EventEmitter<Product>();
+
   addToCart(event: MouseEvent): void {
-    event.stopPropagation();
-    event.preventDefault();
+    //event.stopPropagation();
+    //event.preventDefault();
+    this.productSelected.emit(this.product);
     console.log('Add to cart:', this.product.id);
+  }
+
+  cardOnClick(): void {
+    console.log('Card clicked:', this.product.id);
   }
 
 }

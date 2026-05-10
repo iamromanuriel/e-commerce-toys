@@ -5,7 +5,9 @@
     <h2 class="text-2xl font-bold text-gray-900 mb-4">Productos Destacados</h2>
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @for (product of products; track product.id) {
-            <app-item-product [product]="product"></app-item-product>
+            <app-item-product [product]="product" (productSelected)="productSelected = $event; isDialogOpen = true"></app-item-product>
         }
     </div>
 </div>
+
+<app-product-dialog *ngIf="isDialogOpen" [product]="productSelected" (close)="isDialogOpen = false"></app-product-dialog>
