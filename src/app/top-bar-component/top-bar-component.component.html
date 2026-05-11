@@ -13,19 +13,23 @@
     <!-- Search Bar -->
     <div class="search-container">
       <lucide-icon [name]="searchIcon" class="w-5 h-5 text-gray-400"></lucide-icon>
-      
-      <<input #searchInput type="text" placeholder="Busca por descripción, modelo o marca..."
-  class="search-input" aria-label="Search products" 
-  (input)="onSearchTerm(searchInput.value)" />
+      <input #searchInput type="text" placeholder="Busca por descripción, modelo o marca..."
+        class="search-input" aria-label="Search products"
+        (input)="onSearchTerm(searchInput.value)" />
     </div>
 
     <!-- Action Buttons -->
     <div class="topbar-actions">
 
       <!-- Cart Button -->
-      <lucide-icon [name]="shoppingCartIcon"
-        class="text-indigo-600 size-6 hover:text-indigo-800 transition-colors cursor-pointer">
-      </lucide-icon>
+      <div class="relative">
+        <lucide-icon [name]="shoppingCartIcon" (click)="openCartClick()"
+          class="text-indigo-600 size-6 hover:text-indigo-800 transition-colors cursor-pointer">
+        </lucide-icon>
+        <span *ngIf="cartCount > 0" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+          {{ cartCount }}
+        </span>
+      </div>
 
       <!-- WhatsApp Button -->
       <button (click)="openWhatsApp()" class="action-btn whatsapp-btn" aria-label="Contact via WhatsApp">

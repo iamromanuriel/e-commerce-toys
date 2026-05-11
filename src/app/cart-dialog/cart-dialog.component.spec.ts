@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EntregasComponent } from './entregas.component';
+import { CartDialogComponent } from './cart-dialog.component';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
@@ -14,13 +14,13 @@ const firebaseConfig = {
   measurementId: "G-Y6RZKPM1VV"
 };
 
-describe('EntregasComponent', () => {
-  let component: EntregasComponent;
-  let fixture: ComponentFixture<EntregasComponent>;
+describe('CartDialogComponent', () => {
+  let component: CartDialogComponent;
+  let fixture: ComponentFixture<CartDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntregasComponent],
+      imports: [CartDialogComponent],
       providers: [
         provideFirebaseApp(() => initializeApp(firebaseConfig)),
         provideFirestore(() => getFirestore())
@@ -28,7 +28,7 @@ describe('EntregasComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(EntregasComponent);
+    fixture = TestBed.createComponent(CartDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

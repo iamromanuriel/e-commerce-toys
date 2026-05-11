@@ -13,6 +13,7 @@ import { Product } from '../model/produt';
 export class ProductDialogComponent implements OnChanges {
   @Input() product: Product | null = null;
   @Output() close = new EventEmitter<void>();
+  @Output() addToCart = new EventEmitter<{ product: Product; quantity: number }>();
 
   quantity = 1;
   isFavorite = false;
@@ -67,6 +68,13 @@ export class ProductDialogComponent implements OnChanges {
 
   changeQuantity(delta: number): void {
     this.quantity = Math.max(1, this.quantity + delta);
+  }
+
+  addToCartClick(): void {
+    if (this.product) {
+      this.addToCart.emit({ product: this.product, quantity: this.quantity });
+      this.closeDialog();
+    }
   }
 
   toggleFavorite(): void {

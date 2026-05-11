@@ -2,9 +2,11 @@ import { Component, inject } from '@angular/core';
 import { TopBarComponentComponent } from '../top-bar-component/top-bar-component.component';
 import { FilterCategoryComponent } from '../filter-category/filter-category.component';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
+import { CartDialogComponent } from '../cart-dialog/cart-dialog.component';
 import { BannerComponent } from '../banner/banner.component';
 import { CategoryService } from '../services/category.service';
 import { ProductService } from '../services/product.service';
+import { CartService } from '../services/cart.service';
 import { Category } from '../model/category';
 import { ItemProductComponent } from '../item-product/item-product.component';
 import { Product } from '../model/produt';
@@ -15,13 +17,14 @@ import { ChevronLeft, ChevronRight } from 'lucide-angular';
 @Component({
   selector: 'app-home-screen',
   standalone: true,
-  imports: [TopBarComponentComponent, FilterCategoryComponent, BannerComponent, ItemProductComponent, ProductDialogComponent, CommonModule, LucideAngularModule],
+  imports: [TopBarComponentComponent, FilterCategoryComponent, BannerComponent, ItemProductComponent, ProductDialogComponent, CartDialogComponent, CommonModule, LucideAngularModule],
   templateUrl: './home-screen.component.html',
   styleUrl: './home-screen.component.css'
 })
 export class HomeScreenComponent {
   private categoryService = inject(CategoryService);
   private productService = inject(ProductService);
+  private cartService = inject(CartService);
 
   categorys: Category[] = [];
   products: Product[] = [];
@@ -29,6 +32,7 @@ export class HomeScreenComponent {
   paginatedProducts: Product[] = [];
   productSelected: Product | null = null;
   isDialogOpen = false;
+  isCartOpen = false;
   currentPage = 1;
   totalPages = 1;
   selectedCategory = 'all';
@@ -70,8 +74,20 @@ export class HomeScreenComponent {
     this.isDialogOpen = true;
   }
 
+  openCartDialog(): void {
+    this.isCartOpen = true;
+  }
+
   handleAddToCart(product: Product): void {
-    console.log('Agregar al carrito:', product.id);
+    if (product.id) {
+      this.cartService.addToCart(product.id, 1);
+    }
+  }
+
+  handleAddToCartFromDialog(data: { product: Product; quantity: number }): void {
+    if (data.product.id) {
+      this.cartService.addToCart(data.product.id, data.quantity);
+    }
   }
 
   updatePaginatedProducts(): void {

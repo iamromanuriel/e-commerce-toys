@@ -1,6 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, ShoppingCart, MessageCircle, Search } from 'lucide-angular';
+import { CartService } from '../services/cart.service';
 
 @Component({
   selector: 'app-top-bar-component',
@@ -11,20 +12,29 @@ import { LucideAngularModule, ShoppingCart, MessageCircle, Search } from 'lucide
 })
 export class TopBarComponentComponent {
   @Output() searchChange = new EventEmitter<string>();
+  @Output() openCart = new EventEmitter<void>();
 
-  cartCount = 3;
-  whatsappNumber = '521234567890'; // Cambia por tu número real
+  private cartService = inject(CartService);
+
+  cartCount = 0;
+  whatsappNumber = '527461113626'; // Cambia por tu número real
   readonly shoppingCartIcon = ShoppingCart;
   readonly messageCircleIcon = MessageCircle;
   readonly searchIcon = Search;
 
+  constructor() {
+    this.cartService.cart$.subscribe(cart => {
+      this.cartCount = this.cartService.getTotalItems();
+    });
+  }
+
   openWhatsApp(): void {
-    const url = `https://wa.me/${this.whatsappNumber}`;
+    const url = `https://wa.me/${this.whatsappNumber}?text=Hola%20quiero%20más%20información`;
     window.open(url, '_blank');
   }
 
-  openCart(): void {
-    console.log('Abrir carrito');
+  openCartClick(): void {
+    this.openCart.emit();
   }
 
   onSearchTerm(value: string): void {
