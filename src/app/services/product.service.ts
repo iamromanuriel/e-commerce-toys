@@ -1,8 +1,8 @@
-import { Inject, inject, signal, computed, Injectable } from "@angular/core";
-import { Firestore, collection, collectionData, addDoc, serverTimestamp } from "@angular/fire/firestore";
-import { Observable, from } from "rxjs";
-import { toSignal } from "@angular/core/rxjs-interop";
+import { Inject, inject, signal, Injectable } from "@angular/core";
+import { Firestore, collection, collectionData, serverTimestamp } from "@angular/fire/firestore";
+import { Observable } from "rxjs";
 import { Product } from "../model/produt";
+import { Category } from "../model/category";
 import { writeBatch, doc } from "firebase/firestore";
 
 const ITEMS_PER_PAGE = 12;
@@ -22,92 +22,92 @@ export class ProductService {
     "model": "ABRE EL CUARTO SECRETO PINOCCHIO AND FRIENDS",
     "price": 250.00,
     "stock": 0,
-    "imageUrl": "",
+    "imageUrl": "https://http2.mlstatic.com/D_NQ_NP_2X_914123-MLU74771503063_022024-F.webp",
     "description": "ABRE EL CUARTO SECRETO PINOCCHIO AND FRIENDS",
-    "categoryId": "default"
+    "categoryId": "famosa"
   },
   {
     "brand": "HASBRO",
     "model": "MINI CORTES DIVERTIDOS PLAY DOH",
     "price": 100.00,
     "stock": 24,
-    "imageUrl": "",
+    "imageUrl": "https://m.media-amazon.com/images/I/71zTzE-ZSaL._AC_SL1500_.jpg",
     "description": "MINI CORTES DIVERTIDOS PLAY DOH",
-    "categoryId": "default"
+    "categoryId": "hasbro"
   },
   {
     "brand": "HASBRO",
     "model": "MINI DENTISTA BROMISTA PLAYDOH",
     "price": 100.00,
     "stock": 24,
-    "imageUrl": "",
+    "imageUrl": "https://m.media-amazon.com/images/I/81TZq-2PpXL._AC_SL1500_.jpg",
     "description": "MINI DENTISTA BROMISTA PLAYDOH",
-    "categoryId": "default"
+    "categoryId": "hasbro"
   },
   {
     "brand": "HASBRO",
     "model": "KIT INICIAL FABRICA DIVERTIDA PLAYDOH",
     "price": 100.00,
     "stock": 4,
-    "imageUrl": "",
+    "imageUrl": "https://m.media-amazon.com/images/I/81v0ROwDDrL._AC_SL1500_.jpg",
     "description": "KIT INICIAL FABRICA DIVERTIDA PLAYDOH",
-    "categoryId": "default"
+    "categoryId": "hasbro"
   },
   {
     "brand": "HASBRO",
     "model": "MINI HELADERIA PLAYDOH",
     "price": 100.00,
     "stock": 24,
-    "imageUrl": "",
+    "imageUrl": "https://m.media-amazon.com/images/I/814wyH9kKgL._AC_SL1500_.jpg",
     "description": "MINI HELADERIA PLAYDOH",
-    "categoryId": "default"
+    "categoryId": "hasbro"
   },
   {
     "brand": "HASBRO",
     "model": "TACOS DIVERTIDOS PLAY DOH",
     "price": 100.00,
     "stock": 24,
-    "imageUrl": "",
+    "imageUrl": "https://m.media-amazon.com/images/I/81UK7spLqWL._AC_SL1500_.jpg",
     "description": "TACOS DIVERTIDOS PLAY DOH",
-    "categoryId": "default"
+    "categoryId": "hasbro"
   },
   {
     "brand": "HASBRO",
     "model": "DELICIAS HELADAS PLAYDOH",
     "price": 100.00,
     "stock": 3,
-    "imageUrl": "",
+    "imageUrl": "https://m.media-amazon.com/images/I/81-HfR2xW3L._AC_SL1500_.jpg",
     "description": "DELICIAS HELADAS PLAYDOH",
-    "categoryId": "default"
+    "categoryId": "hasbro"
   },
   {
     "brand": "HASBRO",
     "model": "PRIMERAS CREACIONES CON LA RANA Y LOS COLORES PLAYDOH",
     "price": 100.00,
     "stock": 4,
-    "imageUrl": "",
+    "imageUrl": "https://m.media-amazon.com/images/I/81cJ9+2ZQEL._AC_SL1500_.jpg",
     "description": "PRIMERAS CREACIONES CON LA RANA Y LOS COLORES PLAYDOH",
-    "categoryId": "default"
+    "categoryId": "hasbro"
   },
   {
     "brand": "HASBRO",
     "model": "DINOSAURIO FORMAS Y COLORES PLAYDOH",
     "price": 100.00,
     "stock": 3,
-    "imageUrl": "",
+    "imageUrl": "https://m.media-amazon.com/images/I/81HRVtT5VtL._AC_SL1500_.jpg",
     "description": "DINOSAURIO FORMAS Y COLORES PLAYDOH",
-    "categoryId": "default"
+    "categoryId": "hasbro"
   },
   {
     "brand": "HASBRO",
     "model": "MI JARDIN PLAYDOH",
     "price": 200.00,
     "stock": 3,
-    "imageUrl": "",
+    "imageUrl": "https://m.media-amazon.com/images/I/81LdR8dP+aL._AC_SL1500_.jpg",
     "description": "MI JARDIN PLAYDOH",
-    "categoryId": "default"
+    "categoryId": "hasbro"
   }
-]
+];
 
     getProducts$(): Observable<Product[]> {
         return collectionData(this.productCollection, { idField: 'id' }) as Observable<Product[]>;
@@ -115,18 +115,37 @@ export class ProductService {
 
     async guardarProductosEnFirebase(): Promise<void> {
         const batch = writeBatch(this.firebase);
-        
+        const categoryMap = new Map<string, Category>();
+
         this.product.forEach((producto) => {
-            const docRef = doc(this.productCollection);
-            batch.set(docRef, {
+            const productDocRef = doc(this.productCollection);
+            batch.set(productDocRef, {
                 ...producto,
                 createdAt: serverTimestamp(),
                 updatedAt: serverTimestamp()
             });
+
+            const categoryId = producto.categoryId?.trim().toLowerCase() || producto.brand.trim().toLowerCase();
+            if (!categoryMap.has(categoryId)) {
+                categoryMap.set(categoryId, {
+                    id: categoryId,
+                    name: producto.brand,
+                    description: `Productos de ${producto.brand}`
+                });
+            }
         });
-        
+
+        categoryMap.forEach((category) => {
+            const categoryDocRef = doc(this.firebase, 'category', category.id);
+            batch.set(categoryDocRef, {
+                ...category,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            });
+        });
+
         await batch.commit();
-        console.log(`${this.product.length} productos guardados`);
+        console.log(`${this.product.length} productos y ${categoryMap.size} categorías guardados`);
     }
 
     getCurrentPage(): number {

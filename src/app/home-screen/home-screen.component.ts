@@ -1,5 +1,4 @@
-import { Component } from '@angular/core';
-import { inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { TopBarComponentComponent } from '../top-bar-component/top-bar-component.component';
 import { FilterCategoryComponent } from '../filter-category/filter-category.component';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
@@ -21,22 +20,27 @@ import { ChevronLeft, ChevronRight } from 'lucide-angular';
   styleUrl: './home-screen.component.css'
 })
 export class HomeScreenComponent {
-  categoryService = new CategoryService();
-  productService = inject(ProductService);
+  private categoryService = inject(CategoryService);
+  private productService = inject(ProductService);
 
   categorys: Category[] = [];
   products: Product[] = [];
+  filteredProducts: Product[] = [];
   paginatedProducts: Product[] = [];
   productSelected: Product | null = null;
   isDialogOpen = false;
   currentPage = 1;
   totalPages = 1;
+  selectedCategory = 'all';
+  searchTerm = '';
 
   readonly ChevronLeft = ChevronLeft;
   readonly ChevronRight = ChevronRight;
   readonly Math = Math;
 
-  async ngOnInit(): Promise<void> {
+  ngOnInit(): void {
+    
+
     this.categoryService.getCategories$().subscribe(categories => {
       this.categorys = categories;
       console.log('Categorías cargadas:', this.categorys);
@@ -45,13 +49,33 @@ export class HomeScreenComponent {
     this.productService.getProducts$().subscribe(products => {
       console.log('Productos cargados:', products);
       this.products = products;
-      this.totalPages = this.productService.getTotalPages(products.length);
-      this.updatePaginatedProducts();
+      this.filterProducts();
     });
   }
 
+  onSearchChange(searchTerm: string): void {
+    this.searchTerm = searchTerm;
+    this.productService.setCurrentPage(1);
+    this.filterProducts();
+  }
+
+  onCategoryChange(categoryId: string): void {
+    this.selectedCategory = categoryId;
+    this.productService.setCurrentPage(1);
+    this.filterProducts();
+  }
+
+  openProductDialog(product: Product): void {
+    this.productSelected = product;
+    this.isDialogOpen = true;
+  }
+
+  handleAddToCart(product: Product): void {
+    console.log('Agregar al carrito:', product.id);
+  }
+
   updatePaginatedProducts(): void {
-    this.paginatedProducts = this.productService.getPaginatedProducts(this.products);
+    this.paginatedProducts = this.productService.getPaginatedProducts(this.filteredProducts);
     this.currentPage = this.productService.getCurrentPage();
   }
 
@@ -77,6 +101,22 @@ export class HomeScreenComponent {
       this.updatePaginatedProducts();
       this.scrollToTop();
     }
+  }
+
+  private filterProducts(): void {
+    const normalizedSearch = this.searchTerm.trim().toLowerCase();
+    this.filteredProducts = this.products.filter(product => {
+      const matchesCategory = this.selectedCategory === 'all' || product.categoryId === this.selectedCategory;
+      const matchesSearch = !normalizedSearch || [
+        product.description,
+        product.model,
+        product.brand,
+      ].some(value => value?.toLowerCase().includes(normalizedSearch));
+      return matchesCategory && matchesSearch;
+    });
+
+    this.totalPages = this.productService.getTotalPages(this.filteredProducts.length);
+    this.updatePaginatedProducts();
   }
 
   private scrollToTop(): void {
