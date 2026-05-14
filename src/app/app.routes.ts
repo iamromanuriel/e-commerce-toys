@@ -10,5 +10,12 @@ export const routes: Routes = [
     {
         path: 'entregas',
         component: EntregasComponent
+    },
+    {
+        path: 'admin/productos',
+        loadComponent: () =>
+            import('./admin/products-admin/products-admin.component').then(
+                (m) => m.ProductsAdminComponent
+            ),
     }
 ];
