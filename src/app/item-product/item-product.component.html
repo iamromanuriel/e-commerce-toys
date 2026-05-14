@@ -21,7 +21,7 @@
     } -->
 
     <!-- Product Image -->
-    <img [src]="product.imageUrl || 'https://via.placeholder.com/260x260?text=Sin+imagen'" [alt]="product.description"
+    <img [src]="product.imageUrl | safeImageUrl" [alt]="product.description"
       class="w-4/5 h-4/5 object-contain transition-transform duration-500 group-hover:scale-105" />
   </div>
 
@@ -44,15 +44,10 @@
     }
 
     <!-- Price Row -->
-    <div class="flex items-center gap-2 mt-1 sm:mt-2">
-      <span class="text-sm sm:text-base font-black text-gray-900">
-        {{ product.price.toLocaleString() }} MXN
+    <div class="mt-1 flex items-baseline gap-2 sm:mt-2">
+      <span class="text-sm font-black text-gray-900 sm:text-base">
+        {{ product.price.toLocaleString('es-MX', { style: 'currency', currency: 'MXN', maximumFractionDigits: 0 }) }}
       </span>
-      @if (product.price) {
-      <span class="text-xs sm:text-sm text-gray-400 line-through font-normal">
-        {{ product.price.toLocaleString() }} MXN
-      </span>
-      }
     </div>
 
     <!-- Add to Cart -->

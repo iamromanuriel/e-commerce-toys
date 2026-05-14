@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { HomeScreenComponent } from './home-screen.component';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
@@ -22,6 +23,7 @@ describe('HomeScreenComponent', () => {
     await TestBed.configureTestingModule({
       imports: [HomeScreenComponent],
       providers: [
+        provideRouter([]),
         provideFirebaseApp(() => initializeApp(firebaseConfig)),
         provideFirestore(() => getFirestore())
       ]

@@ -2,11 +2,12 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { Product } from '../model/produt';
+import { SafeImageUrlPipe } from '../shared/safe-image-url.pipe';
 
 @Component({
   selector: 'app-item-product',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, SafeImageUrlPipe],
   templateUrl: './item-product.component.html',
   styleUrl: './item-product.component.css'
 })

@@ -1,10 +1,12 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
   });
 
@@ -20,10 +22,11 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('e-commerce-deliver-toys');
   });
 
-  it('should render title', () => {
+  it('should render shell with outlet and toast region', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, e-commerce-deliver-toys');
+    expect(compiled.querySelector('router-outlet')).toBeTruthy();
+    expect(compiled.querySelector('app-toast-notification')).toBeTruthy();
   });
 });

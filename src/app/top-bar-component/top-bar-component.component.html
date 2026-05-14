@@ -1,44 +1,50 @@
 <header class="topbar-wrapper">
   <nav class="topbar-inner">
+    <div class="topbar-row">
+      <a routerLink="/" class="topbar-logo" aria-label="Inicio">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-icon">
+          <path d="M3 3L21 21M3 21L12 3L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+            stroke-linejoin="round" />
+        </svg>
+        <span class="logo-text">nitec.</span>
+      </a>
 
-    <!-- Logo -->
-    <a href="/" class="topbar-logo" aria-label="Nitec Home">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-icon">
-        <path d="M3 3L21 21M3 21L12 3L21 21" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
-          stroke-linejoin="round" />
-      </svg>
-      <span class="logo-text">nitec.</span>
-    </a>
+      <div class="topbar-actions">
+        <div class="relative">
+          <button
+            type="button"
+            class="cart-hit flex items-center justify-center rounded-full p-2 text-indigo-600 transition-colors hover:bg-white/80 hover:text-indigo-800"
+            (click)="openCartClick()"
+            aria-label="Abrir carrito"
+          >
+            <lucide-icon [name]="shoppingCartIcon" class="size-6"></lucide-icon>
+          </button>
+          <span
+            *ngIf="cartCount > 0"
+            class="absolute -right-1 -top-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white"
+          >
+            {{ cartCount > 99 ? '99+' : cartCount }}
+          </span>
+        </div>
 
-    <!-- Search Bar -->
-    <div class="search-container">
-      <lucide-icon [name]="searchIcon" class="w-5 h-5 text-gray-400"></lucide-icon>
-      <input #searchInput type="text" placeholder="Busca por descripción, modelo o marca..."
-        class="search-input" aria-label="Search products"
-        (input)="onSearchTerm(searchInput.value)" />
+        <button type="button" (click)="openWhatsApp()" class="action-btn whatsapp-btn" aria-label="Contactar por WhatsApp">
+          <lucide-icon [name]="messageCircleIcon" class="size-6 text-white"></lucide-icon>
+        </button>
+      </div>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="topbar-actions">
-
-      <!-- Cart Button -->
-      <div class="relative">
-        <lucide-icon [name]="shoppingCartIcon" (click)="openCartClick()"
-          class="text-indigo-600 size-6 hover:text-indigo-800 transition-colors cursor-pointer">
-        </lucide-icon>
-        <span *ngIf="cartCount > 0" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-          {{ cartCount }}
-        </span>
-      </div>
-
-      <!-- WhatsApp Button -->
-      <button (click)="openWhatsApp()" class="action-btn whatsapp-btn" aria-label="Contact via WhatsApp">
-        <!-- WhatsApp Icon -->
-        <lucide-icon [name]="messageCircleIcon"
-          class="text-slate-50 size-6 hover:text-secondary transition-colors cursor-pointer">
-        </lucide-icon>
-      </button>
-
+    <div class="search-container">
+      <lucide-icon [name]="searchIcon" class="h-5 w-5 flex-shrink-0 text-gray-400"></lucide-icon>
+      <input
+        #searchInput
+        type="search"
+        autocomplete="off"
+        maxlength="200"
+        placeholder="Busca por descripción, modelo o marca…"
+        class="search-input min-w-0"
+        aria-label="Buscar productos"
+        (input)="onSearchTerm(searchInput.value)"
+      />
     </div>
   </nav>
 </header>

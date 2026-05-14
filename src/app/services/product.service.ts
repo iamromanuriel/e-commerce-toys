@@ -145,7 +145,6 @@ export class ProductService {
         });
 
         await batch.commit();
-        console.log(`${this.product.length} productos y ${categoryMap.size} categorías guardados`);
     }
 
     getCurrentPage(): number {

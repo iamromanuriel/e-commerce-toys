@@ -1,6 +1,6 @@
 <section
-  class="relative w-full rounded-2xl overflow-hidden bg-gradient-to-br from-[#eef0f3] to-[#e2e6eb] select-none"
-  style="min-height: 420px;"
+  class="relative mx-auto w-full max-w-7xl select-none overflow-hidden rounded-2xl bg-gradient-to-br from-[#eef0f3] to-[#e2e6eb] sm:rounded-2xl"
+  style="min-height: min(52vh, 380px);"
   (mouseenter)="stopAutoplay()"
   (mouseleave)="startAutoplay()"
 >
@@ -8,14 +8,14 @@
   <!-- Slides -->
   @for (slide of slides; track slide.title; let i = $index) {
     <div
-      class="absolute inset-0 flex items-center px-10 py-10 transition-all duration-500"
+      class="absolute inset-0 flex flex-col items-center gap-6 px-4 py-8 transition-all duration-500 sm:flex-row sm:items-center sm:px-10 sm:py-10"
       [class.opacity-100]="i === currentIndex"
       [class.opacity-0]="i !== currentIndex"
       [class.pointer-events-auto]="i === currentIndex"
       [class.pointer-events-none]="i !== currentIndex"
     >
       <!-- Left Content -->
-      <div class="flex flex-col gap-5 max-w-md z-10">
+      <div class="z-10 flex max-w-full flex-col gap-4 sm:max-w-md sm:gap-5">
 
         <!-- Badge -->
         <span class="inline-flex items-center gap-1.5 self-start bg-white/80 backdrop-blur-sm text-gray-700 text-xs font-medium px-3 py-1.5 rounded-full shadow-sm border border-white/60">
@@ -23,7 +23,7 @@
         </span>
 
         <!-- Title -->
-        <h1 class="text-4xl font-black text-gray-900 leading-tight tracking-tight">
+        <h1 class="text-2xl font-black leading-tight tracking-tight text-gray-900 sm:text-4xl">
           {{ slide.title }}
         </h1>
 
@@ -88,7 +88,9 @@
       }
 
       <!-- Product Image -->
-      <div class="absolute right-6 top-1/2 -translate-y-1/2 w-72 h-72 flex items-center justify-center pointer-events-none">
+      <div
+        class="pointer-events-none relative mt-4 flex h-48 w-full max-w-[220px] items-center justify-center self-center sm:absolute sm:right-6 sm:top-1/2 sm:mt-0 sm:h-72 sm:max-w-none sm:w-72 sm:-translate-y-1/2 sm:self-auto"
+      >
         <div
           class="absolute inset-0 rounded-full opacity-20 blur-3xl"
           [style.backgroundColor]="slide.accent"

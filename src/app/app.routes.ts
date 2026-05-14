@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { Entrega } from './services/firebase.service';
 import { EntregasComponent } from './entregas/entregas.component';
 import { HomeScreenComponent } from './home-screen/home-screen.component';
 

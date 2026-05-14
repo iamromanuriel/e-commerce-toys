@@ -1,23 +1,24 @@
-
-<div class="flex flex-col gap-3 items-center">
-  <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-widest">
+<div class="flex min-w-0 flex-col items-center gap-3">
+  <h2 class="text-center text-xs font-semibold uppercase tracking-widest text-gray-500">
     Filtrar por categoría
   </h2>
-  <div class="flex flex-wrap gap-2 justify-center">
+  <div class="flex w-max max-w-full flex-nowrap justify-center gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
     <button
       (click)="selectCategory('all')"
+      type="button"
       [class]="selectedCategory === 'all'
-        ? 'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-gray-900 text-white shadow-sm'
-        : 'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-white text-gray-600 border border-gray-200 hover:border-gray-400 hover:text-gray-900'"
+        ? 'shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-gray-900 text-white shadow-sm min-h-[44px]'
+        : 'shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-white text-gray-600 border border-gray-200 hover:border-gray-400 hover:text-gray-900 min-h-[44px]'"
     >
       Todas
     </button>
     <button
       *ngFor="let category of categorys"
+      type="button"
       (click)="selectCategory(category.id)"
       [class]="selectedCategory === category.id
-        ? 'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-gray-900 text-white shadow-sm'
-        : 'px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200 bg-white text-gray-600 border border-gray-200 hover:border-gray-400 hover:text-gray-900'"
+        ? 'shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-gray-900 text-white shadow-sm min-h-[44px]'
+        : 'shrink-0 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-white text-gray-600 border border-gray-200 hover:border-gray-400 hover:text-gray-900 min-h-[44px]'"
     >
       {{ category.name }}
     </button>

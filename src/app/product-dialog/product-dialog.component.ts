@@ -1,12 +1,14 @@
-import { Component, EventEmitter, Input, OnChanges, Output, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { LucideAngularModule, X, Truck, Shield, Star, Heart } from 'lucide-angular';
 import { Product } from '../model/produt';
 
+import { SafeImageUrlPipe } from '../shared/safe-image-url.pipe';
+
 @Component({
   selector: 'app-product-dialog',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, SafeImageUrlPipe],
   templateUrl: './product-dialog.component.html',
   styleUrl: './product-dialog.component.css'
 })
@@ -47,7 +49,10 @@ export class ProductDialogComponent implements OnChanges {
     ];
   }
 
-  ngOnChanges(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['product']?.currentValue) {
+      this.quantity = 1;
+    }
     if (isPlatformBrowser(this.platformId)) {
       document.body.style.overflow = this.product ? 'hidden' : '';
     }

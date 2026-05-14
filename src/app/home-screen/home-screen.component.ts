@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { TopBarComponentComponent } from '../top-bar-component/top-bar-component.component';
 import { FilterCategoryComponent } from '../filter-category/filter-category.component';
 import { ProductDialogComponent } from '../product-dialog/product-dialog.component';
@@ -13,15 +13,16 @@ import { Product } from '../model/produt';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { ChevronLeft, ChevronRight } from 'lucide-angular';
+import { FooterComponent } from "../footer/footer.component";
 
 @Component({
   selector: 'app-home-screen',
   standalone: true,
-  imports: [TopBarComponentComponent, FilterCategoryComponent, BannerComponent, ItemProductComponent, ProductDialogComponent, CartDialogComponent, CommonModule, LucideAngularModule],
+  imports: [TopBarComponentComponent, FilterCategoryComponent, BannerComponent, ItemProductComponent, ProductDialogComponent, CartDialogComponent, CommonModule, LucideAngularModule, FooterComponent],
   templateUrl: './home-screen.component.html',
   styleUrl: './home-screen.component.css'
 })
-export class HomeScreenComponent {
+export class HomeScreenComponent implements OnInit {
   private categoryService = inject(CategoryService);
   private productService = inject(ProductService);
   private cartService = inject(CartService);
@@ -43,15 +44,11 @@ export class HomeScreenComponent {
   readonly Math = Math;
 
   ngOnInit(): void {
-    
-
-    this.categoryService.getCategories$().subscribe(categories => {
+    this.categoryService.getCategories$().subscribe((categories) => {
       this.categorys = categories;
-      console.log('Categorías cargadas:', this.categorys);
     });
 
-    this.productService.getProducts$().subscribe(products => {
-      console.log('Productos cargados:', products);
+    this.productService.getProducts$().subscribe((products) => {
       this.products = products;
       this.filterProducts();
     });
@@ -117,6 +114,14 @@ export class HomeScreenComponent {
       this.updatePaginatedProducts();
       this.scrollToTop();
     }
+  }
+
+  selectedCategoryLabel(): string {
+    if (this.selectedCategory === 'all') {
+      return 'Todas las categorías';
+    }
+    const found = this.categorys.find((c) => c.id === this.selectedCategory);
+    return found?.name ?? this.selectedCategory;
   }
 
   private filterProducts(): void {

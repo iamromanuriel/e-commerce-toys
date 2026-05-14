@@ -5,6 +5,9 @@ import { CartService, CartItem } from '../services/cart.service';
 import { ProductService } from '../services/product.service';
 import { Product } from '../model/produt';
 import { combineLatest, firstValueFrom, map, Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { sanitizePlainText } from '../utils/url-security';
+import { SafeImageUrlPipe } from '../shared/safe-image-url.pipe';
 
 interface CartItemWithProduct extends CartItem {
   product: Product;
@@ -13,7 +16,7 @@ interface CartItemWithProduct extends CartItem {
 @Component({
   selector: 'app-cart-dialog',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, SafeImageUrlPipe],
   templateUrl: './cart-dialog.component.html',
   styleUrl: './cart-dialog.component.css'
 })
@@ -81,24 +84,28 @@ export class CartDialogComponent implements OnInit {
       return;
     }
 
-    console.log('Finalizando compra con los siguientes items:', items);
     const currentTotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
     const message = this.generateWhatsAppMessage(items, currentTotal);
-    console.log('Mensaje de WhatsApp generado:', message);
-    const whatsappUrl = `https://wa.me/522225218638?text=${encodeURIComponent(message)}`;
-    window.open(whatsappUrl, '_blank');
+    const phone = environment.whatsappPhoneDigits.replace(/\D/g, '');
+    if (!phone) {
+      return;
+    }
+    const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
   }
 
   private generateWhatsAppMessage(items: CartItemWithProduct[], total: number): string {
     let message = 'Hola, me gustaría comprar los siguientes productos:\n\n';
-    items.forEach(item => {
-      message += `${item.product.brand} ${item.product.model}\n`;
+    items.forEach((item) => {
+      const brand = sanitizePlainText(item.product.brand, 120);
+      const model = sanitizePlainText(item.product.model, 120);
+      message += `${brand} ${model}\n`;
       message += `Cantidad: ${item.quantity}\n`;
       message += `Precio unitario: ${item.product.price} MXN\n`;
       message += `Subtotal: ${item.product.price * item.quantity} MXN\n\n`;
     });
     message += `Total: ${total} MXN\n\n`;
     message += 'Por favor, confirma la disponibilidad y el método de pago.';
-    return message;
+    return message.slice(0, 3500);
   }
 }
