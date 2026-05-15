@@ -1,10 +1,8 @@
 <div class="login-page">
   <div class="login-card shadow-soft">
     <header class="login-header">
-      <p class="login-eyebrow">Entrega de juguetes</p>
       <h1 class="login-title">Iniciar sesión</h1>
       <p class="login-subtitle">
-        Pantalla de demostración: el formulario valida en el navegador; no se envían datos a ningún servidor.
       </p>
     </header>
 
@@ -52,7 +50,7 @@
           } @else if (password.hasError('minlength') && password.touched) {
             <span>Al menos 6 caracteres.</span>
           } @else {
-            <span>Solo para la maqueta; no se guarda en ningún sitio.</span>
+            <span></span>
           }
         </p>
       </div>
@@ -60,8 +58,6 @@
       <button type="submit" class="login-submit">Entrar (demostración)</button>
     </form>
 
-    <footer class="login-footer">
-      <a routerLink="/" class="login-back">← Volver al inicio</a>
-    </footer>
+
   </div>
 </div>

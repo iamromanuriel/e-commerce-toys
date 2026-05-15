@@ -1,7 +1,9 @@
-import { Component, inject } from '@angular/core';
+import { Component ,inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router,RouterLink } from '@angular/router';
 import { NotificationService } from '../../services/notification.service';
+import { AuthService } from '../../services/auth.service';
+
 
 @Component({
   selector: 'app-login',
@@ -13,14 +15,14 @@ import { NotificationService } from '../../services/notification.service';
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly notifications = inject(NotificationService);
-
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   /** Formulario solo para UI y validación local; no hay llamadas a backend. */
   readonly loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  /** Accesos cortos para la plantilla. */
   get email() {
     return this.loginForm.controls.email;
   }
@@ -36,8 +38,16 @@ export class LoginComponent {
       return;
     }
 
+    this.authService.login(this.email.value, this.password.value).then(() => {
+      this.router.navigate(['/admin/productos']);
+      this.notifications.show('Inicio de sesión correcto.');
+      this.loginForm.reset();
+    }).catch((error) => {
+      this.notifications.show('Error al iniciar sesión. Revisa el correo y la contraseña.');
+      console.error('Error al iniciar sesión:', error.message);
+    });
+
     // Vista previa estática: sin autenticación real.
-    this.notifications.show('Modo demostración: inicio de sesión simulado correctamente.');
-    this.loginForm.reset();
+    
   }
 }

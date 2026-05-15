@@ -5,6 +5,7 @@ import { initializeApp, provideFirebaseApp, getApp } from '@angular/fire/app';
 import { initializeFirestore, provideFirestore } from '@angular/fire/firestore';
 import { routes } from './app.routes';
 import { environment } from '../environments/environment';
+import { provideAuth, getAuth } from '@angular/fire/auth';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -14,6 +15,7 @@ export const appConfig: ApplicationConfig = {
 
     // ✅ Solo se inicializa UNA vez
     provideFirebaseApp(() => initializeApp(environment.firebase)),
+    provideAuth(() => getAuth()),
 
     // ✅ getApp() reutiliza la instancia ya creada arriba
     provideFirestore(() =>
