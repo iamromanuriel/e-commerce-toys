@@ -17,5 +17,10 @@ export const routes: Routes = [
             import('./admin/products-admin/products-admin.component').then(
                 (m) => m.ProductsAdminComponent
             ),
-    }
+    },
+    {
+        path: 'login',
+        loadComponent: () =>
+            import('./auth/login/login.component').then((m) => m.LoginComponent),
+    },
 ];
