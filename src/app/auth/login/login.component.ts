@@ -17,7 +17,7 @@ export class LoginComponent {
   private readonly notifications = inject(NotificationService);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  /** Formulario solo para UI y validación local; no hay llamadas a backend. */
+  /** Formulario de acceso con Email/Password (Firebase Auth). */
   readonly loginForm = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(6)]],
@@ -46,8 +46,5 @@ export class LoginComponent {
       this.notifications.show('Error al iniciar sesión. Revisa el correo y la contraseña.');
       console.error('Error al iniciar sesión:', error.message);
     });
-
-    // Vista previa estática: sin autenticación real.
-    
   }
 }

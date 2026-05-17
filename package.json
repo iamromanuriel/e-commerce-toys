@@ -5,6 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
+    "build:prod": "ng build --configuration production",
+    "deploy": "npm run build:prod && firebase deploy --only hosting",
+    "deploy:hosting": "firebase deploy --only hosting",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:e-commerce-deliver-toys": "node dist/e-commerce-deliver-toys/server/server.mjs"

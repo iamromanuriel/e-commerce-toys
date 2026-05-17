@@ -1,0 +1,13 @@
+{
+  "name": "e-commerce-deliver-toys",
+  "runtime": "nodejs18",
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": "8080"
+  },
+  "buildpacks": [
+    {
+      "builder": "gcr.io/buildpacks/builder:v1"
+    }
+  ]
+}

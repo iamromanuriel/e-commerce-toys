@@ -1,0 +1,40 @@
+# Configuración para Google Cloud Build
+steps:
+  # Paso 1: Construir la imagen Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/e-commerce-deliver-toys:$SHORT_SHA'
+      - '-t'
+      - 'gcr.io/$PROJECT_ID/e-commerce-deliver-toys:latest'
+      - '-f'
+      - 'Dockerfile'
+      - '.'
+
+  # Paso 2: Hacer push a Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'push'
+      - 'gcr.io/$PROJECT_ID/e-commerce-deliver-toys:$SHORT_SHA'
+
+  # Paso 3: Desplegar a Cloud Run
+  - name: 'gcr.io/cloud-builders/gke-deploy'
+    args:
+      - 'run'
+      - '-f=.'
+      - '-i'
+      - 'gcr.io/$PROJECT_ID/e-commerce-deliver-toys:$SHORT_SHA'
+      - '-l'
+      - 'canary'
+      - '-o=/workspace/output'
+
+images:
+  - 'gcr.io/$PROJECT_ID/e-commerce-deliver-toys:$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/e-commerce-deliver-toys:latest'
+
+options:
+  machineType: 'N1_HIGHCPU_8'
+  substitutionOption: 'ALLOW_LOOSE'
+
+timeout: '3600s'

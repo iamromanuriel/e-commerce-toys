@@ -70,6 +70,85 @@ export class ProductsAdminComponent {
     stock: [0, [Validators.required, Validators.min(0), Validators.max(999_999)]],
   });
 
+  // ── Category local state ─────────────────────────────────────────────────
+
+  readonly localCategories = signal<Category[]>([]);
+
+  readonly editingCategoryId = signal<string | null>(null);
+  readonly savingCategory = signal(false);
+  readonly deletingCategoryId = signal<string | null>(null);
+
+  readonly categoryForm = this.fb.nonNullable.group({
+    id: ['', [Validators.required, Validators.maxLength(64), Validators.pattern(/^\S+$/)]],
+    name: ['', [Validators.required, Validators.maxLength(120)]],
+  });
+
+  isEditingCategory(): boolean {
+    return this.editingCategoryId() !== null;
+  }
+
+  onSubmitCategory(): void {
+    this.categoryForm.markAllAsTouched();
+    if (this.categoryForm.invalid || this.savingCategory()) {
+      return;
+    }
+
+    this.savingCategory.set(true);
+    const { id, name } = this.categoryForm.getRawValue();
+    const editId = this.editingCategoryId();
+
+    if (editId) {
+      // Update existing local category
+      this.localCategories.update((list) =>
+        list.map((c) => (c.id === editId ? { ...c, id, name } : c))
+      );
+      this.notify.show('Categoría actualizada (local).');
+      this.cancelEditCategory();
+    } else {
+      // Check for duplicate id
+      const exists = this.localCategories().some((c) => c.id === id);
+      if (exists) {
+        this.notify.show('Ya existe una categoría con ese ID.');
+        this.savingCategory.set(false);
+        return;
+      }
+      //this.localCategories.update((list) => );
+      this.notify.show('Categoría registrada (local).');
+      this.categoryForm.reset({ id: '', name: '' });
+    }
+
+    this.savingCategory.set(false);
+  }
+
+  startEditCategory(category: Category): void {
+    this.editingCategoryId.set(category.id ?? null);
+    this.categoryForm.patchValue({ id: category.id, name: category.name });
+    this.notify.show('Modo edición de categoría: actualiza y guarda.');
+  }
+
+  cancelEditCategory(): void {
+    this.editingCategoryId.set(null);
+    this.categoryForm.reset({ id: '', name: '' });
+  }
+
+  confirmDeleteCategory(category: Category): void {
+    if (!category.id || this.deletingCategoryId()) {
+      return;
+    }
+    if (!confirm(`¿Eliminar la categoría "${category.name}"? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+    this.deletingCategoryId.set(category.id);
+    this.localCategories.update((list) => list.filter((c) => c.id !== category.id));
+    this.notify.show('Categoría eliminada (local).');
+    if (this.editingCategoryId() === category.id) {
+      this.cancelEditCategory();
+    }
+    this.deletingCategoryId.set(null);
+  }
+
+  // ── Product helpers ──────────────────────────────────────────────────────
+
   constructor() {
     effect(() => {
       const total = this.totalPages();
@@ -196,6 +275,10 @@ export class ProductsAdminComponent {
 
   trackById(_: number, p: Product): string {
     return p.id ?? '';
+  }
+
+  trackByCategoryId(_: number, c: Category): string {
+    return c.id ?? '';
   }
 
   categoryLabel(id: string, list: Category[]): string {

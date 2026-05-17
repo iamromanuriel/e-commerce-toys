@@ -1,0 +1,59 @@
+# Google Cloud Build ignore file
+# Archivos que no se necesitan en Cloud Build
+
+# Control de versiones
+.git/
+.gitignore
+.gitattributes
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+npm-debug.log*
+yarn-error.log*
+
+# Testing
+karma.conf.js
+src/**/*.spec.ts
+tsconfig.spec.json
+
+# Source files (ya compilados en dist/)
+src/
+angular.json
+tsconfig.json
+tsconfig.app.json
+
+# Documentación
+*.md
+LICENSE
+
+# Configuración local
+.env
+.env.local
+.env.*.local
+
+# Cache de Angular
+.angular/
+
+# Cache de npm
+.npm/
+.cache/
+
+# macOS
+.DS_Store
+*.pem
+
+# Archivo de configuración de desarrollo
+environments/
+
+# Firebase local cache
+.firebase/
+.firebaserc-dev
+firebase-debug.log
+
+# Node modules se instalarán durante el build
+node_modules/

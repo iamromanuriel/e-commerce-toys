@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { EntregasComponent } from './entregas/entregas.component';
 import { HomeScreenComponent } from './home-screen/home-screen.component';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     {
@@ -13,6 +14,7 @@ export const routes: Routes = [
     },
     {
         path: 'admin/productos',
+        canActivate: [authGuard],
         loadComponent: () =>
             import('./admin/products-admin/products-admin.component').then(
                 (m) => m.ProductsAdminComponent

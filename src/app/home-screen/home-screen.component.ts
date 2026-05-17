@@ -49,6 +49,7 @@ export class HomeScreenComponent implements OnInit {
     });
 
     this.productService.getProducts$().subscribe((products) => {
+      console.log("getProducts");
       this.products = products;
       this.filterProducts();
     });
