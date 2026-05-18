@@ -8,7 +8,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { AdminProductService } from './admin-product.service';
-import { CategoryService } from '../../services/category.service';
+import { CategoryService, CategoryWritePayload } from '../../services/category.service';
 import { NotificationService } from '../../services/notification.service';
 import { Product } from '../../model/produt';
 import { Category } from '../../model/category';
@@ -21,7 +21,7 @@ const PAGE_SIZE = 10;
   selector: 'app-products-admin',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
-  providers: [AdminProductService],
+  providers: [AdminProductService, CategoryService],
   templateUrl: './products-admin.component.html',
 })
 export class ProductsAdminComponent {
@@ -61,6 +61,7 @@ export class ProductsAdminComponent {
     brand: ['', [Validators.required, Validators.maxLength(120)]],
     model: ['', [Validators.required, Validators.maxLength(200)]],
     description: ['', [Validators.required, Validators.maxLength(2000)]],
+    // FIX #2: este campo ahora se enlaza correctamente con el <select> en el HTML
     categoryId: ['', [Validators.required, Validators.maxLength(64)]],
     imageUrl: [
       '',
@@ -72,11 +73,10 @@ export class ProductsAdminComponent {
 
   // ── Category local state ─────────────────────────────────────────────────
 
-  readonly localCategories = signal<Category[]>([]);
-
   readonly editingCategoryId = signal<string | null>(null);
   readonly savingCategory = signal(false);
   readonly deletingCategoryId = signal<string | null>(null);
+  readonly selectCategoryId = signal<string | null>(null);
 
   readonly categoryForm = this.fb.nonNullable.group({
     id: ['', [Validators.required, Validators.maxLength(64), Validators.pattern(/^\S+$/)]],
@@ -87,37 +87,40 @@ export class ProductsAdminComponent {
     return this.editingCategoryId() !== null;
   }
 
-  onSubmitCategory(): void {
+  async onSubmitCategory(): Promise<void> {
     this.categoryForm.markAllAsTouched();
     if (this.categoryForm.invalid || this.savingCategory()) {
       return;
     }
 
+    const raw = this.categoryForm.getRawValue();
+
+    // FIX #1: payload con los campos correctos (name → name, id → id/description)
+    const payload: CategoryWritePayload = {
+      name: raw.name,
+      description: raw.id,
+    };
+
     this.savingCategory.set(true);
-    const { id, name } = this.categoryForm.getRawValue();
-    const editId = this.editingCategoryId();
 
-    if (editId) {
-      // Update existing local category
-      this.localCategories.update((list) =>
-        list.map((c) => (c.id === editId ? { ...c, id, name } : c))
-      );
-      this.notify.show('Categoría actualizada (local).');
-      this.cancelEditCategory();
-    } else {
-      // Check for duplicate id
-      const exists = this.localCategories().some((c) => c.id === id);
-      if (exists) {
-        this.notify.show('Ya existe una categoría con ese ID.');
-        this.savingCategory.set(false);
-        return;
+    try {
+      const id = this.editingCategoryId();
+      if (id) {
+        // FIX #3: llamar al servicio de actualización, no solo mostrar notificación
+        await this.categories.updateCategory(id, payload);
+        this.notify.show('Categoría actualizada correctamente.');
+        this.cancelEditCategory();
+      } else {
+        await this.categories.createCategory(payload);
+        this.notify.show('Categoría guardada correctamente.');
+        this.categoryForm.reset({ id: '', name: '' });
       }
-      //this.localCategories.update((list) => );
-      this.notify.show('Categoría registrada (local).');
-      this.categoryForm.reset({ id: '', name: '' });
+    } catch (error) {
+      this.notify.show('No se puede guardar la categoría.');
+    } finally {
+      // FIX #4: usar savingCategory, no saving
+      this.savingCategory.set(false);
     }
-
-    this.savingCategory.set(false);
   }
 
   startEditCategory(category: Category): void {
@@ -139,7 +142,6 @@ export class ProductsAdminComponent {
       return;
     }
     this.deletingCategoryId.set(category.id);
-    this.localCategories.update((list) => list.filter((c) => c.id !== category.id));
     this.notify.show('Categoría eliminada (local).');
     if (this.editingCategoryId() === category.id) {
       this.cancelEditCategory();
@@ -156,6 +158,9 @@ export class ProductsAdminComponent {
       if (page > total) {
         this.currentPage.set(total);
       }
+
+      const category = this.categoryList();
+      console.log(category);
     });
   }
 
@@ -204,7 +209,7 @@ export class ProductsAdminComponent {
       brand: raw.brand,
       model: raw.model,
       description: raw.description,
-      categoryId: raw.categoryId,
+      categoryId: this.selectCategoryId() ?? raw.categoryId,
       imageUrl: raw.imageUrl,
       price: Number(raw.price),
       stock: Math.floor(Number(raw.stock)),
@@ -284,5 +289,11 @@ export class ProductsAdminComponent {
   categoryLabel(id: string, list: Category[]): string {
     const c = list.find((x) => x.id === id);
     return c?.name ?? id;
+  }
+
+  onSelectCategory(category: string): void {
+    this.form.controls.categoryId.setValue(category);
+    this.selectCategoryId.set(category || null);
+    console.log('onSelectCategory', category);
   }
 }

@@ -38,6 +38,7 @@ export class HomeScreenComponent implements OnInit {
   totalPages = 1;
   selectedCategory = 'all';
   searchTerm = '';
+  readonly itemsPerPage = this.productService.getItemsPerPage();
 
   readonly ChevronLeft = ChevronLeft;
   readonly ChevronRight = ChevronRight;
@@ -49,7 +50,6 @@ export class HomeScreenComponent implements OnInit {
     });
 
     this.productService.getProducts$().subscribe((products) => {
-      console.log("getProducts");
       this.products = products;
       this.filterProducts();
     });
@@ -89,8 +89,13 @@ export class HomeScreenComponent implements OnInit {
   }
 
   updatePaginatedProducts(): void {
+    const current = this.productService.getCurrentPage();
+    const validPage = Math.max(1, Math.min(current, this.totalPages));
+    if (validPage !== current) {
+      this.productService.setCurrentPage(validPage);
+    }
+    this.currentPage = validPage;
     this.paginatedProducts = this.productService.getPaginatedProducts(this.filteredProducts);
-    this.currentPage = this.productService.getCurrentPage();
   }
 
   previousPage(): void {
@@ -118,17 +123,21 @@ export class HomeScreenComponent implements OnInit {
   }
 
   selectedCategoryLabel(): string {
-    if (this.selectedCategory === 'all') {
+    if (this.selectedCategory.trim().toLowerCase() === 'all') {
       return 'Todas las categorías';
     }
-    const found = this.categorys.find((c) => c.id === this.selectedCategory);
+    const categoryId = this.selectedCategory.trim().toLowerCase();
+    const found = this.categorys.find((c) => c.id?.trim().toLowerCase() === categoryId);
     return found?.name ?? this.selectedCategory;
   }
 
   private filterProducts(): void {
     const normalizedSearch = this.searchTerm.trim().toLowerCase();
+    const normalizedCategory = this.selectedCategory.trim().toLowerCase();
+
     this.filteredProducts = this.products.filter(product => {
-      const matchesCategory = this.selectedCategory === 'all' || product.categoryId === this.selectedCategory;
+      const productCategory = product.categoryId?.trim().toLowerCase() ?? '';
+      const matchesCategory = normalizedCategory === 'all' || productCategory === normalizedCategory;
       const matchesSearch = !normalizedSearch || [
         product.description,
         product.model,
@@ -137,7 +146,7 @@ export class HomeScreenComponent implements OnInit {
       return matchesCategory && matchesSearch;
     });
 
-    this.totalPages = this.productService.getTotalPages(this.filteredProducts.length);
+    this.totalPages = Math.max(1, this.productService.getTotalPages(this.filteredProducts.length));
     this.updatePaginatedProducts();
   }
 

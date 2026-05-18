@@ -65,23 +65,46 @@
           }
         </div>
 
-        <div class="sm:col-span-1">
-          <label for="categoryId" class="block text-sm font-medium text-slate-700">ID de categoría</label>
-          <input
-            id="categoryId"
-            type="text"
-            formControlName="categoryId"
-            list="category-options"
-            class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm shadow-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500"
-            placeholder="ej. hasbro"
-          />
-          <datalist id="category-options">
-            @for (c of categoryList(); track c.id) {
-              <option [value]="c.id">{{ c.name }}</option>
-            }
-          </datalist>
+        <!-- FIX #2: select ahora tiene formControlName="categoryId" para enlazarse al FormGroup -->
+        <div class="sm:col-span-2">
+          <label for="categoryId" class="block text-sm font-medium text-slate-700 mb-2">
+            Selecciona una Categoría
+          </label>
+
+          <div class="relative max-w-sm">
+            <select
+            #categorySelect
+              id="categoryId"
+              formControlName="categoryId"
+              (change)="onSelectCategory(categorySelect.value)"
+              class="block w-full px-4 py-2.5 text-gray-700 bg-white border border-gray-300 rounded-lg appearance-none shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm"
+            >
+              <option value="" disabled class="text-gray-400">
+                Elige una opción
+              </option>
+
+              @for (category of categoryList(); track category.id) {
+                <option 
+                [value]="category.id"
+                 class="text-gray-900">
+                  {{ category.name }}
+                </option>
+              } @empty {
+                <option disabled class="text-gray-400 italic">
+                  Cargando categorías...
+                </option>
+              }
+            </select>
+
+            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+              <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+              </svg>
+            </div>
+          </div>
+
           @if (form.controls.categoryId.touched && form.controls.categoryId.invalid) {
-            <p class="mt-1 text-xs text-red-600">Indica un id de categoría.</p>
+            <p class="mt-1 text-xs text-red-600">Selecciona una categoría.</p>
           }
         </div>
 
@@ -215,7 +238,7 @@
       </form>
     </section>
 
-    <!-- ── Tabla: Categorías locales ────────────────────────────────────── -->
+    <!-- ── Tabla: Categorías ────────────────────────────────────────────── -->
     <section
       class="mb-10 rounded-2xl border border-slate-200 bg-white shadow-sm"
       aria-labelledby="category-table-heading"
@@ -225,7 +248,7 @@
           Categorías registradas
         </h2>
         <p class="text-sm text-slate-500">
-          {{ localCategories().length }} en total (local)
+          {{ categoryList().length }} en total
         </p>
       </div>
 
@@ -239,7 +262,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 bg-white">
-            @for (c of localCategories(); track trackByCategoryId($index, c)) {
+            @for (c of categoryList(); track trackByCategoryId($index, c)) {
               <tr class="hover:bg-slate-50/80">
                 <td class="px-4 py-3 font-mono text-xs text-slate-700">{{ c.id }}</td>
                 <td class="px-4 py-3 text-slate-900">{{ c.name }}</td>

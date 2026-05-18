@@ -2,10 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Product } from '../../model/produt';
 import { ProductService, ProductWritePayload } from '../../services/product.service';
+import { CategoryService } from '../../services/category.service';
+import { Category } from '../../model/category';
 
 @Injectable()
 export class AdminProductService {
   private readonly products = inject(ProductService);
+  private readonly categoryS = inject(CategoryService);
 
   readonly products$: Observable<Product[]> = this.products.getProducts$();
 

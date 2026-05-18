@@ -11,8 +11,8 @@
         <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">Productos Destacados</h2>
         <p class="text-sm sm:text-base text-gray-600 mt-2">
           Mostrando
-          {{ filteredProducts.length === 0 ? 0 : (currentPage - 1) * 12 + 1 }} -
-          {{ Math.min(currentPage * 12, filteredProducts.length) }} de
+          {{ filteredProducts.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1 }} -
+          {{ Math.min(currentPage * itemsPerPage, filteredProducts.length) }} de
           {{ filteredProducts.length }} productos
         </p>
       </div>
