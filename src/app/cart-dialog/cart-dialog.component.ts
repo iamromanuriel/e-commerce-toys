@@ -35,7 +35,7 @@ export class CartDialogComponent implements OnInit {
   ngOnInit(): void {
     this.cartItemsWithProducts$ = combineLatest([
       this.cartService.cart$,
-      this.productService.getProducts$()
+      this.productService.getAllProducts$()
     ]).pipe(
       map(([cartItems, products]) => {
         const productMap = new Map(products.map(p => [p.id, p]));

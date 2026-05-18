@@ -37,6 +37,11 @@ export class CategoryService {
     );
   }
 
+  getAllCategories$(): Observable<Category[]> {
+    const ref = query(this.categoryCollectionRef);
+    return collectionData(ref, { idField: "id" }) as Observable<Category[]>;
+  }
+
   async createCategory(payload: CategoryWritePayload): Promise<void> {
     const userId = await this.auth.requireUidForWrites();
     await addDoc(this.categoryCollectionRef, {

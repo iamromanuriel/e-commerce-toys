@@ -138,6 +138,12 @@ export class ProductService {
     );
   }
 
+
+  getAllProducts$(): Observable<Product[]> {
+    const ref = query(this.productCollectionRef)
+    return collectionData(ref, { idField: "id" }) as Observable<Product[]>;
+  }
+
   async createProduct(payload: ProductWritePayload): Promise<void> {
     const userId = await this.auth.requireUidForWrites();
     await addDoc(this.productCollectionRef, {

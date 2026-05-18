@@ -14,6 +14,7 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule } from 'lucide-angular';
 import { ChevronLeft, ChevronRight } from 'lucide-angular';
 import { FooterComponent } from "../footer/footer.component";
+import { Console } from 'node:console';
 
 @Component({
   selector: 'app-home-screen',
@@ -45,14 +46,22 @@ export class HomeScreenComponent implements OnInit {
   readonly Math = Math;
 
   ngOnInit(): void {
-    this.categoryService.getCategories$().subscribe((categories) => {
+    /*this.categoryService.getCategories$().subscribe((categories) => {
+      this.categorys = categories;
+    });*/
+    this.categoryService.getAllCategories$().subscribe((categories) => {
       this.categorys = categories;
     });
 
-    this.productService.getProducts$().subscribe((products) => {
+    /*this.productService.getProducts$().subscribe((products) => {
       this.products = products;
       this.filterProducts();
-    });
+    });*/
+
+    this.productService.getAllProducts$().subscribe((products) => {
+      this.products = products;
+      this.filterProducts();
+    })
   }
 
   onSearchChange(searchTerm: string): void {
